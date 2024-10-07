@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Variables
+PID_FILE="/var/run/my_process.pid"
+PROCESS_FILE="/tmp/my_process"
+
+start() {
+    if [ -f "$PID_FILE" ]; then
+        echo "manage_my_process is already running"
+    else
+        # Start the process
+        ./manage_my_process & 
+        echo $! > "$PID_FILE"
+        echo "manage_my_process started"
+    fi
+}
+
+stop() {
+    if [ -f "$PID_FILE" ]; then
+        # Stop the process
+        kill "$(cat "$PID_FILE")"
+        rm -f "$PID_FILE"
+        echo "manage_my_process stopped"
+    else
+        echo "manage_my_process is not running"
+    fi
+}
+
+restart() {
+    stop
+    start
+    echo "manage_my_process restarted"
+}
+
+usage() {
+    echo "Usage: $0 {start|stop|restart}"
+}
+
+# Main logic
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        restart
+        ;;
+    *)
+        usage
+        ;;
+esac
+
