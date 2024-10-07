@@ -1,37 +1,10 @@
-#!/bin/bash
-
-# Create the PID file
-echo $$ > /var/run/myscript.pid
-
-# Signal handlers
-sigterm_handler() {
-    echo "I hate the kill command"
-    cleanup
-    exit 0
-}
-
-sigint_handler() {
-    echo "Y U no love me?!"
-}
-
-sigquit_handler() {
-    cleanup
-    exit 0
-}
-
-cleanup() {
-    # Delete the PID file and terminate the process
-    rm -f /var/run/myscript.pid
-}
-
-# Trap signals
-trap sigterm_handler SIGTERM
-trap sigint_handler SIGINT
-trap sigquit_handler SIGQUIT
-
-# Infinite loop to display "To infinity and beyond"
-while true; do
-    echo "To infinity and beyond"
-    sleep 1
+#!/usr/bin/env bash
+# process and pid file
+file="/var/run/myscript.pid"
+echo $$ > "$file"
+trap 'echo "I hate the kill command"; rm "$file"; exit' SIGTERM SIGQUIT
+trap 'echo Y U no love me?!' SIGINT
+while :; do
+	echo "To infinity and beyond"
+	sleep 2
 done
-
